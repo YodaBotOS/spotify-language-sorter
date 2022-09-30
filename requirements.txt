@@ -1,0 +1,5 @@
+requests
+fastapi
+uvicorn
+google-cloud-translate
+google-cloud-speech
