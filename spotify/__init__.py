@@ -80,7 +80,7 @@ class SpotifyClient:
                 "grant_type": "refresh_token"
             }
 
-            r = self.session.post(url, json=data, headers=headers)
+            r = self.session.post(url, data=data, headers=headers)
             js = r.json()
 
             self.auth_token = js["access_token"]
@@ -93,7 +93,7 @@ class SpotifyClient:
                 "grant_type": "authorization_code"
             }
 
-            r = self.session.post(url, json=data, headers=headers)
+            r = self.session.post(url, data=data, headers=headers)
             js = r.json()
 
             self.auth_token = js["access_token"]
