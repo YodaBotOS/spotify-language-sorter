@@ -145,7 +145,8 @@ class SpotifyClient:
     def add_playlist_items(self, playlist_id, uris, *, position=None):
         url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
 
-        uris = list(uris)
+        if not isinstance(uris, list):
+            uris = [uris]
 
         data = {
             "uris": uris
@@ -158,11 +159,14 @@ class SpotifyClient:
         return r.json()
 
     def delete_playlist_items(self, playlist_id, uris):
+        url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
+
+        if not isinstance(uris, list):
+            uris = [uris]
+
         data = {
             "tracks": [{"uri": uri} for uri in uris]
         }
-
-        url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
 
         r = self.session.delete(url, headers=self.get_auth(), json=data)
         return r.json()
