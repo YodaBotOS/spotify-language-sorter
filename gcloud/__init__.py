@@ -64,7 +64,7 @@ def detect_language_from_audio(file: str | bytes):
     second_lang = languages_accepted[1:]
 
     config = speech.RecognitionConfig(
-        encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,  # type: ignore
+        encoding=speech.RecognitionConfig.AudioEncoding.MP3,  # type: ignore
         sample_rate_hertz=44100,  # type: ignore
         audio_channel_count=2,  # type: ignore
         language_code=first_lang,
