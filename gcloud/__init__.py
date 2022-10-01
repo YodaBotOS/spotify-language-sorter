@@ -6,7 +6,7 @@ from google.cloud import speech_v1p1beta1 as speech
 import config
 
 project = config.GOOGLE_CLOUD_PROJECT_NUMBER_OR_ID
-languages_accepted = config.SORTED_PLAYLIST_IDS.keys()
+languages_accepted = list(config.SORTED_PLAYLIST_IDS.keys())
 
 if len(languages_accepted) > 4:
     raise ValueError("You can only have a maximum of 4 languages in SORTED_PLAYLIST_IDS")
@@ -68,7 +68,7 @@ def detect_language_from_audio(file: str | bytes):
         sample_rate_hertz=44100,  # type: ignore
         audio_channel_count=2,  # type: ignore
         language_code=first_lang,
-        alternative_language_codes=second_lang,
+        alternative_language_codes=second_lang,  # type: ignore
     )
 
     response = client.recognize(config=config, audio=audio)
