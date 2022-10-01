@@ -101,7 +101,15 @@ class SpotifyClient:
             self.refresh_token = js["refresh_token"]
 
             if self.should_renew_token:
-                self._renew_task = asyncio.create_task(self._renew_token_task())
+                # Changes to asyncio event loops in >=3.10
+                # Really hacky way, but idc.
+                # If you want to fix this, go on make a PR
+
+                async def main(cls):
+                    func = self._renew_token_task()
+                    cls._renew_task = asyncio.create_task(func)
+
+                asyncio.run(main(self))
 
     def get_current_user(self):
         url = "https://api.spotify.com/v1/me"
