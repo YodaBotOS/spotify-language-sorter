@@ -196,6 +196,16 @@ class Utils:
                 time.sleep(.5)
 
     @classmethod
+    def check_track_presence(cls, track_id, playlist_id):
+        tracks = cls.get_tracks_on_playlist(playlist_id)
+
+        for track in tracks:
+            if track["id"] == track_id:
+                return True
+
+        return False
+
+    @classmethod
     def run(cls):
         while True:
             cls.log("Getting tracks on playlist...")
@@ -224,9 +234,12 @@ class Utils:
                         continue
 
                     if playlist_id := config.SORTED_PLAYLIST_IDS.get(lang["code"]):
-                        cls.client.add_playlist_items(playlist_id, track["uri"])
+                        if not cls.check_track_presence(track["id"], playlist_id):
+                            cls.client.add_playlist_items(playlist_id, cls.generate_track_uri(track["id"]))
 
-                        cls.log(f"Added track {track['id']} to playlist {playlist_id}.")
+                            cls.log(f"Added track {track['id']} to playlist {playlist_id}.")
+
+                            time.sleep(.25)
 
                         flag = False
 
