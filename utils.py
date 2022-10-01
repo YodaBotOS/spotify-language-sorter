@@ -219,7 +219,7 @@ class Utils:
 
                 for lang in possible_languages:
                     if playlist_id := config.SORTED_PLAYLIST_IDS.get(lang["code"]):
-                        cls.client.add_playlist_items(playlist_id, [track["uri"]])
+                        cls.client.add_playlist_items(playlist_id, track["uri"])
 
                         cls.log(f"Added track {track['id']} to playlist {playlist_id}.")
 
