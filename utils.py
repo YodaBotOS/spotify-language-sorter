@@ -217,13 +217,19 @@ class Utils:
                     cls.log("WARNING: No preview available. Only checking for title...", error=True)
                     continue
 
+                flag = True
+
                 for lang in possible_languages:
                     if playlist_id := config.SORTED_PLAYLIST_IDS.get(lang["code"]):
                         cls.client.add_playlist_items(playlist_id, track["uri"])
 
                         cls.log(f"Added track {track['id']} to playlist {playlist_id}.")
 
-                        break
+                        flag = False
+
+                if flag:
+                    cls.log(f"No playlist found for this track. Possible languages returned {possible_languages}",
+                            error=True)
 
                 time.sleep(.5)
 
