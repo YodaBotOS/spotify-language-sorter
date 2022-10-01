@@ -152,7 +152,21 @@ class Utils:
 
     @classmethod
     def get_tracks_on_playlist(cls, playlist_id):
-        return [x["track"] for x in cls.client.get_playlist_items(playlist_id, limit=1)["items"]]
+        tracks = []
+
+        offset = 0
+
+        while True:
+            resp = cls.client.get_playlist_items(playlist_id, offset=offset)
+
+            if not resp["items"]:
+                break
+
+            tracks.extend(resp["items"])
+
+            offset += 100
+
+        return tracks
 
     @classmethod
     def handle_removed_tracks(cls, tracks):
@@ -201,7 +215,7 @@ class Utils:
 
                 for lang in possible_languages:
                     if playlist_id := config.SORTED_PLAYLIST_IDS.get(lang["code"]):
-                        cls.client.add_playlist_items(playlist_id, track["uri"])
+                        cls.client.add_playlist_items(playlist_id, [track["uri"]])
 
                         cls.log(f"Added track {track['id']} to playlist {playlist_id}.")
 
