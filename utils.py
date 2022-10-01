@@ -220,6 +220,9 @@ class Utils:
                 flag = True
 
                 for lang in possible_languages:
+                    if lang["code"] not in list(config.SORTED_PLAYLIST_IDS.keys()):
+                        continue
+
                     if playlist_id := config.SORTED_PLAYLIST_IDS.get(lang["code"]):
                         cls.client.add_playlist_items(playlist_id, track["uri"])
 

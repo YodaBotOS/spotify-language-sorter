@@ -43,8 +43,7 @@ def detect_language_from_text(text):
 
         code = code.lower().split("-")[0]
 
-        if code in languages_accepted:
-            langs.append({"code": code, "confidence": confidence})
+        langs.append({"code": code, "confidence": confidence})
 
     langs.sort(key=lambda d: d["confidence"], reverse=True)
 
@@ -84,9 +83,6 @@ def detect_language_from_audio(file: str | bytes):
         langs_raw.append(code)
 
     for code in langs_raw:
-        if code not in languages_accepted:
-            continue
-
         if code in langs_done:
             continue
 
