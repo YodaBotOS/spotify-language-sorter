@@ -107,13 +107,14 @@ class Utils:
     @classmethod
     def get_possible_languages(cls, track):
         title = track["name"]
-        preview_url = track["preview_url"]
+        preview_url = track.get("preview_url")
 
         resp_title = detect_language_from_text(title)
 
-        preview = requests.get(preview_url).content
+        if preview_url:
+            preview = requests.get(preview_url).content
 
-        resp_preview = detect_language_from_audio(preview)
+            resp_preview = detect_language_from_audio(preview)
 
         res = []  # code: ..., confidences: [..., ...], sum-confidence: ..., confidence: ...
 
@@ -125,24 +126,25 @@ class Utils:
                 "confidence": lang["confidence"]
             })
 
-        for lang in resp_preview:
-            if lang["code"] in [r["code"] for r in res]:
-                for r in res:
-                    if r["code"] == lang["language"]:
-                        r["confidences"].append(lang["confidence"])
-                        r["sum-confidence"] += lang["confidence"]
-                        r["confidence"] = r["sum-confidence"] / len(r["confidences"])
-            else:
-                res.append({
-                    "code": lang["language"],
-                    "confidences": [lang["confidence"]],
-                    "sum-confidence": lang["confidence"],
-                    "confidence": lang["confidence"]
-                })
+        if preview_url:
+            for lang in resp_preview:  # type: ignore
+                if lang["code"] in [r["code"] for r in res]:
+                    for r in res:
+                        if r["code"] == lang["language"]:
+                            r["confidences"].append(lang["confidence"])
+                            r["sum-confidence"] += lang["confidence"]
+                            r["confidence"] = r["sum-confidence"] / len(r["confidences"])
+                else:
+                    res.append({
+                        "code": lang["language"],
+                        "confidences": [lang["confidence"]],
+                        "sum-confidence": lang["confidence"],
+                        "confidence": lang["confidence"]
+                    })
 
         res.sort(key=lambda x: x["confidence"], reverse=True)
 
-        return res
+        return res, preview_url is not None
 
     @staticmethod
     def generate_track_uri(track_id):
@@ -191,7 +193,11 @@ class Utils:
             for track in tracks:
                 cls.log("Now checking track: " + track["name"] + " - " + track["external_urls"]["spotify"])
 
-                possible_languages = cls.get_possible_languages(track)
+                possible_languages, preview_available = cls.get_possible_languages(track)
+
+                if preview_available is False:
+                    cls.log("WARNING: No preview available. Only checking for title...", error=True)
+                    continue
 
                 for lang in possible_languages:
                     if playlist_id := config.SORTED_PLAYLIST_IDS.get(lang["code"]):
@@ -203,4 +209,4 @@ class Utils:
 
                 time.sleep(.5)
 
-            time.sleep(3.5)
+            time.sleep(5)
