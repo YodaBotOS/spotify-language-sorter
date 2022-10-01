@@ -120,7 +120,7 @@ class Utils:
 
         for lang in resp_title:
             res.append({
-                "code": lang["language"],
+                "code": lang["code"],
                 "confidences": [lang["confidence"]],
                 "sum-confidence": lang["confidence"],
                 "confidence": lang["confidence"]
@@ -130,13 +130,13 @@ class Utils:
             for lang in resp_preview:  # type: ignore
                 if lang["code"] in [r["code"] for r in res]:
                     for r in res:
-                        if r["code"] == lang["language"]:
+                        if r["code"] == lang["code"]:
                             r["confidences"].append(lang["confidence"])
                             r["sum-confidence"] += lang["confidence"]
                             r["confidence"] = r["sum-confidence"] / len(r["confidences"])
                 else:
                     res.append({
-                        "code": lang["language"],
+                        "code": lang["code"],
                         "confidences": [lang["confidence"]],
                         "sum-confidence": lang["confidence"],
                         "confidence": lang["confidence"]
