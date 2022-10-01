@@ -162,7 +162,11 @@ class Utils:
             if not resp["items"]:
                 break
 
-            tracks.extend(resp["items"])
+            for item in resp["items"]:
+                if track := item["track"]:
+                    tracks.append(track)
+                else:
+                    break
 
             offset += 100
 
