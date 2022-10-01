@@ -61,4 +61,6 @@ client = utils.initialize_spotify_client(request["code"])
 
 utils.check_is_me()
 
+utils.log("Running Spotify Language Sorter")
 
+utils.run()
